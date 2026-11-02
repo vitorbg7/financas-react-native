@@ -1,72 +1,74 @@
-# Finanças (React Native)
+# Finance (React Native)
 
-App de finanças pessoais para celular, feito com React Native e Expo. Registra receitas e despesas, mostra o saldo de cada mês, os gastos por categoria e o quanto do limite mensal já foi usado. Os dados ficam salvos no aparelho, sem internet nem conta.
+🇧🇷 [Português](README.pt-BR.md) · 🇺🇸 English
 
-É a versão mobile de [financas-pessoais-js](https://github.com/vitorbg7/financas-pessoais-js): as regras de negócio vieram de lá, agora em TypeScript.
+A personal finance app for mobile, built with React Native and Expo. It records income and expenses and shows each month's balance, spending by category and how much of the monthly limit has been used. Data is saved on the device, with no internet and no account.
 
-| Resumo do mês | Novo lançamento |
+It is the mobile version of [financas-pessoais-js](https://github.com/vitorbg7/financas-pessoais-js): the business rules came from there, now in TypeScript.
+
+| Month summary | New entry |
 | --- | --- |
-| ![Tela principal](docs/tela-principal.png) | ![Novo lançamento](docs/novo-lancamento.png) |
+| ![Main screen](docs/tela-principal.png) | ![New entry](docs/novo-lancamento.png) |
 
-## Funcionalidades
+## Features
 
-- Cadastro de receitas e despesas, com categoria, data e valor
-- Navegação por mês, com saldo, receitas e despesas
-- Despesas por categoria, com valor e percentual
-- Limite mensal de gastos com barra de progresso (muda de cor perto de estourar)
-- Filtro por tipo e busca por descrição, sem diferenciar acentos nem maiúsculas
-- Exclusão com confirmação
-- Exportação do mês em CSV (compartilhado como texto)
-- Dados de exemplo para testar rápido
+- Register income and expenses, with category, date and amount
+- Month navigation, with balance, income and expenses
+- Expenses by category, with amount and percentage
+- Monthly spending limit with a progress bar (changes color near the limit)
+- Filter by type and search by description, ignoring accents and case
+- Delete with confirmation
+- Export the month as CSV (shared as text)
+- Sample data for quick testing
 
-## Tecnologias
+## Technologies
 
-React Native 0.88 · Expo SDK 58 · TypeScript · AsyncStorage · Jest e Testing Library
+React Native 0.88 · Expo SDK 58 · TypeScript · AsyncStorage · Jest and Testing Library
 
-## Estrutura
+## Structure
 
 ```
-App.tsx                 Tela principal: junta os componentes e calcula o que mostrar
+App.tsx                 Main screen: wires components together and computes what to show
 src/
-  dominio/              Regras de negócio em funções puras, sem React
-    dinheiro.ts           Conversão de texto para centavos e formatação em reais
-    datas.ts              Datas e meses
-    transacoes.ts         Criação, validação, filtros e ordenação
-    relatorios.ts         Resumo, gastos por categoria, limite e CSV
-    exemplo.ts            Dados de exemplo
-  armazenamento.ts      Leitura e escrita no AsyncStorage, com validação
-  useFinancas.ts        Hook com o estado do app e as ações (adicionar, remover, limite)
-  componentes/          Telas e peças de interface
-  __tests__/            Testes da lógica e das telas
+  dominio/              Business rules as pure functions, no React
+    dinheiro.ts           Text to cents conversion and formatting in reais
+    datas.ts              Dates and months
+    transacoes.ts         Creation, validation, filters and sorting
+    relatorios.ts         Summary, spending by category, limit and CSV
+    exemplo.ts            Sample data
+  armazenamento.ts      Reads and writes AsyncStorage, with validation
+  useFinancas.ts        Hook with the app state and actions (add, remove, limit)
+  componentes/          Screens and interface pieces
+  __tests__/            Logic and screen tests
 ```
 
-As telas não conhecem o armazenamento e a pasta `dominio` não conhece o React. Por isso a lógica é testada sem precisar renderizar nada.
+The screens do not know the storage and the `dominio` folder does not know React. That is why the logic is tested without rendering anything.
 
-## Decisões
+## Decisions
 
-- **Dinheiro em centavos inteiros.** Evita erros de ponto flutuante como `0.1 + 0.2`. O texto digitado passa por um validador que aceita `1.234,56`, `12,5` ou `R$ 10` e recusa `1,005` (meio centavo).
-- **Datas como texto `AAAA-MM-DD`.** Sem objeto `Date` nem fuso horário, então o dia 23 nunca vira 22. O formulário usa `DD/MM/AAAA` e converte.
-- **Nada derivado é salvo.** Saldo, totais por categoria e progresso do limite são calculados a partir da lista de lançamentos, então nunca ficam diferentes dos dados.
-- **Dados guardados são validados na leitura.** Se algum item estiver corrompido, só ele é descartado e o app abre normalmente.
-- **Formatação feita à mão** (`formatarMoeda`, nomes dos meses) em vez de `Intl`, para o resultado não depender do suporte de cada aparelho.
-- **Sem biblioteca de navegação.** O app tem uma tela principal e dois modais, então estado simples resolve.
+- **Money as integer cents.** Avoids floating-point errors like `0.1 + 0.2`. Typed text goes through a validator that accepts `1.234,56`, `12,5` or `R$ 10` and rejects `1,005` (half a cent).
+- **Dates as `YYYY-MM-DD` text.** No `Date` object and no time zone, so the 23rd never becomes the 22nd. The form uses `DD/MM/YYYY` and converts.
+- **Nothing derived is stored.** Balance, totals by category and limit progress are computed from the list of entries, so they never differ from the data.
+- **Stored data is validated on read.** If an item is corrupted, only that item is discarded and the app opens normally.
+- **Hand-written formatting** (`formatarMoeda`, month names) instead of `Intl`, so the result does not depend on each device's support.
+- **No navigation library.** The app has one main screen and two modals, so simple state is enough.
 
-## Como rodar
+## Running
 
-Precisa de [Node.js](https://nodejs.org) (versão LTS) e do app **Expo Go** no celular.
+Requires [Node.js](https://nodejs.org) (LTS version) and the **Expo Go** app on your phone.
 
 ```
 npm install
 npx expo start
 ```
 
-Escaneie o QR code que aparece no terminal com o Expo Go (Android) ou com a câmera (iPhone). O celular e o computador precisam estar na mesma rede Wi-Fi.
+Scan the QR code shown in the terminal with Expo Go (Android) or the camera (iPhone). The phone and the computer must be on the same Wi-Fi network.
 
-## Testes
+## Tests
 
 ```
 npm test
 npm run typecheck
 ```
 
-Os testes cobrem as regras de negócio (conversão de valores, datas, validação, filtros, relatórios, CSV) e o fluxo das telas: adicionar, validar o formulário, filtrar, excluir e recarregar os dados salvos.
+Tests cover the business rules (amount conversion, dates, validation, filters, reports, CSV) and the screen flow: adding, validating the form, filtering, deleting and reloading saved data.
